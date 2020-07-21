@@ -15,60 +15,101 @@ namespace DigitalHealth.Web.Services
 
     public class MarkCRUDService : IMarkCRUDService
     {
+        private readonly ILogger _logger;
+
+        public MarkCRUDService(ILogger logger)
+        {
+            _logger = logger;
+        }
         private async Task<Mark> GetEntity(Guid Id)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.Marks.Where(m => m.Id == Id).FirstOrDefaultAsync();
+                using (DHContext db = new DHContext())
+                {
+                    return await db.Marks.Where(m => m.Id == Id).FirstOrDefaultAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed GetEntity Mark {Id} : {exc}");
+                throw;
+            }
+            
         }
 
         public async Task Delete(Guid Id)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                var entity = await GetEntity(Id);
-                db.Entry(entity).State = EntityState.Deleted;
-                db.Marks.Remove(entity);
-                await db.SaveChangesAsync();
+                using (DHContext db = new DHContext())
+                {
+                    var entity = await GetEntity(Id);
+                    db.Entry(entity).State = EntityState.Deleted;
+                    db.Marks.Remove(entity);
+                    await db.SaveChangesAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed delete mark {Id} : {exc}");
+                throw;  
+            }
+            
         }
 
         public async Task Create(MarkDto dto)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                var entity = new Mark
+                using (DHContext db = new DHContext())
                 {
-                    Comment = dto.Comment,
-                    CreateDate = DateTime.Now,
-                    Id = Guid.NewGuid(),
-                    MethodOfTreatmentId = dto.MethodOfTreatmentId,
-                    UserId = dto.UserId,
-                    Value = dto.Value
-                };
-                db.Marks.Add(entity);
-                await db.SaveChangesAsync();
+                    var entity = new Mark
+                    {
+                        Comment = dto.Comment,
+                        CreateDate = DateTime.Now,
+                        Id = Guid.NewGuid(),
+                        MethodOfTreatmentId = dto.MethodOfTreatmentId,
+                        UserId = dto.UserId,
+                        Value = dto.Value
+                    };
+                    db.Marks.Add(entity);
+                    await db.SaveChangesAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed create mark : {exc}");
+            }
+            
         }
 
         public async Task<List<MarkDto>> GetByMethod(Guid MethodId)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.Marks.Include(m=>m.User).Include(m=>m.MethodOfTreatment).Where(m => m.MethodOfTreatmentId == MethodId).Select(m => new MarkDto
-                    {
-                        Id = m.Id,
-                        Comment = m.Comment,
-                        CreateDate = m.CreateDate,
-                        Login = m.User.Login,
-                        MethodName = m.MethodOfTreatment.Title,
-                        MethodOfTreatmentId = m.MethodOfTreatmentId,
-                        UserId = m.UserId,
-                        Value = m.Value
-                    })
-                    .ToListAsync();
+                using (DHContext db = new DHContext())
+                {
+                    return await db.Marks.Include(m => m.User).Include(m => m.MethodOfTreatment).Where(m => m.MethodOfTreatmentId == MethodId).Select(m => new MarkDto
+                        {
+                            Id = m.Id,
+                            Comment = m.Comment,
+                            CreateDate = m.CreateDate,
+                            Login = m.User.Login,
+                            MethodName = m.MethodOfTreatment.Title,
+                            MethodOfTreatmentId = m.MethodOfTreatmentId,
+                            UserId = m.UserId,
+                            Value = m.Value
+                        })
+                        .ToListAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed Get List Marks By Method {MethodId} : {exc}");
+                throw;
+            }
+          
         }
 
         public async Task<MarkListDto> List(int page = 0, int size = 5, string search = null)
@@ -109,10 +150,10 @@ namespace DigitalHealth.Web.Services
             }
             catch (Exception exc)
             {
-                //Console.WriteLine(exc);
+                _logger.Error($"Failed get list mark : {exc}");
+                throw;
 
             }
-            return null;
         }
     }
 }
