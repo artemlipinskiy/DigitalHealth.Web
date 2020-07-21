@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using DigitalHealth.GlobalInterfaces;
 using DigitalHealth.Web.EntitiesDto;
 using DigitalHealth.Web.Services;
 
@@ -12,7 +13,12 @@ namespace DigitalHealth.Web.Controllers
     [Authorize(Roles = "SysAdmin, Expert")]
     public class MethodOfTreatmentController : Controller
     {
-        private readonly MethodOfTreatmentCRUDService _methodOfTreatmentCrudService = new MethodOfTreatmentCRUDService();
+        private readonly IMethodOfTreatmentCRUDService _methodOfTreatmentCrudService;
+
+        public MethodOfTreatmentController()
+        {
+            _methodOfTreatmentCrudService = new MethodOfTreatmentCRUDService();
+        }
         // GET: MethodOfTreatment
         public async Task<ActionResult> Index(int? page)
         {

@@ -4,11 +4,15 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using DigitalHealth.GlobalInterfaces;
+using DigitalHealth.Services;
 using DigitalHealth.Web.EntitiesDto;
 
 namespace DigitalHealth.Web.Services
 {
-    public class DiagnosticService
+    
+
+    public class DiagnosticService : IDiagnosticService
     {
         public async Task<List<DiagnosticResultDto>> GetResult(List<Guid> SymptomIds)
         {

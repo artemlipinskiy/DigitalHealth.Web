@@ -5,6 +5,8 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using DigitalHealth.GlobalInterfaces;
+using DigitalHealth.Services;
 using DigitalHealth.Web.EntitiesDto;
 using DigitalHealth.Web.Services;
 
@@ -13,10 +15,18 @@ namespace DigitalHealth.Web.Controllers
     [Authorize]
     public class DiagnosticController : Controller
     {
-        private readonly DiagnosticService diagnosticService = new DiagnosticService();
-        private readonly SymptomCRUDService symptomCrudService = new SymptomCRUDService();
-        private readonly MarkCRUDService markCrudService = new MarkCRUDService();
-       private readonly  AccountService accountService = new AccountService();
+        private readonly IDiagnosticService _diagnosticService;
+        private readonly ISymptomCRUDService _symptomCrudService;
+        private readonly IMarkCRUDService _markCrudService;
+        private readonly  IAccountService _accountService;
+
+       public DiagnosticController()
+       {
+           _diagnosticService = new DiagnosticService();
+           _symptomCrudService = new SymptomCRUDService();
+           _markCrudService = new MarkCRUDService();
+           _accountService = new AccountService();
+       }
         // GET: Diagnostic
         public ActionResult Index()
         {
@@ -25,19 +35,19 @@ namespace DigitalHealth.Web.Controllers
 
         public async Task<JsonResult> Symptoms()
         {
-            var result = await symptomCrudService.GetAll();
+            var result = await _symptomCrudService.GetAll();
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         public async Task<ActionResult> Diagnostic(List<Guid> SymptomIds)
         {
-            var result = await diagnosticService.GetResult(SymptomIds);
+            var result = await _diagnosticService.GetResult(SymptomIds);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         public async Task<JsonResult> FindMethods(Guid DiseaseId)
         {
-            var result = await diagnosticService.FindMethods(DiseaseId);
+            var result = await _diagnosticService.FindMethods(DiseaseId);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
@@ -45,16 +55,16 @@ namespace DigitalHealth.Web.Controllers
         public async Task<ActionResult> CreateMark(MarkDto dto)
         {
             var currentuserName = User.Identity.Name;
-            var currentuserId =await accountService.GetUserId(currentuserName);
+            var currentuserId =await _accountService.GetUserId(currentuserName);
             dto.UserId = currentuserId;
-            await markCrudService.Create(dto);
+            await _markCrudService.Create(dto);
             return null;
         }
 
         [HttpGet]
         public async Task<JsonResult> GetMarks(Guid MethodId)
         {
-            var marks = await markCrudService.GetByMethod(MethodId);
+            var marks = await _markCrudService.GetByMethod(MethodId);
             return Json(marks, JsonRequestBehavior.AllowGet);
         }
     }

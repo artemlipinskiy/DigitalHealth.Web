@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using DigitalHealth.Web.Entities;
 
-namespace DigitalHealth.Web
+namespace DigitalHealth.Services
 {
     public class DHContext: DbContext
     {

@@ -4,12 +4,16 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using DigitalHealth.GlobalInterfaces;
+using DigitalHealth.Services;
 using DigitalHealth.Web.Entities;
 using DigitalHealth.Web.EntitiesDto;
 
 namespace DigitalHealth.Web.Services
 {
-    public class MarkCRUDService
+   
+
+    public class MarkCRUDService : IMarkCRUDService
     {
         private async Task<Mark> GetEntity(Guid Id)
         {

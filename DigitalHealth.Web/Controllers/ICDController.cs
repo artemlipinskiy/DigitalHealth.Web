@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using System.Collections.Generic;
-using System.Web.Helpers;
-using Antlr.Runtime;
-using DigitalHealth.Web.Entities;
+﻿using DigitalHealth.GlobalInterfaces;
 using DigitalHealth.Web.EntitiesDto;
 using DigitalHealth.Web.Services;
-using Microsoft.Ajax.Utilities;
-using Newtonsoft.Json;
-using PagedList;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace DigitalHealth.Web.Controllers
 {
     public class ICDController : Controller
     {
-        private  readonly ICDCRUDService _icdcrudService = new ICDCRUDService();
+        private readonly IICDCRUDService _icdcrudService;
+        public ICDController() { _icdcrudService = new ICDCRUDService(); }
         // GET: ICD
         public async Task<ActionResult> Index(int? page)
         {

@@ -1,19 +1,19 @@
-﻿using DigitalHealth.Web.Entities;
+﻿using DigitalHealth.GlobalInterfaces;
+using DigitalHealth.Web.Entities;
+using DigitalHealth.Web.EntitiesDto;
+using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
-using System.Web;
-using System.Web.UI.WebControls;
-using DigitalHealth.Web.EntitiesDto;
-using Microsoft.Owin.Security;
 
-namespace DigitalHealth.Web.Services
+namespace DigitalHealth.Services
 {
-    public class AccountService
+    public class AccountService : IAccountService 
     {
         public async Task<bool> Login(AccountLoginDto dto, IAuthenticationManager AuthenticationManager)
         {
@@ -60,15 +60,15 @@ namespace DigitalHealth.Web.Services
         {
             using (DHContext db = new DHContext())
             {
-               var userdb = await db.Users.Where(user => user.Login == Login).FirstOrDefaultAsync();
-               if (userdb != null)
-               {
-                   return true;
-               }
-               else
-               {
-                   return false;
-               }
+                var userdb = await db.Users.Where(user => user.Login == Login).FirstOrDefaultAsync();
+                if (userdb != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
         public async Task<bool> PasswordMatch(string password, string repeatpassword)
@@ -84,7 +84,7 @@ namespace DigitalHealth.Web.Services
         }
         public async Task<RoleDto> GetRole(string name)
         {
-            using (DHContext db =new DHContext())
+            using (DHContext db = new DHContext())
             {
                 return await db.Roles.Where(r => r.Name == name).Select(r => new RoleDto
                 {
@@ -129,7 +129,7 @@ namespace DigitalHealth.Web.Services
         {
             using (DHContext db = new DHContext())
             {
-                return await db.Profiles.Where(p => p.UserId == userId).Select(p=>new ProfileDto
+                return await db.Profiles.Where(p => p.UserId == userId).Select(p => new ProfileDto
                 {
                     Id = p.Id,
                     FirstName = p.FirstName,
@@ -143,7 +143,7 @@ namespace DigitalHealth.Web.Services
         {
             using (DHContext db = new DHContext())
             {
-                return await db.Users.Where(u => u.Login == name).Select(u=>u.Id).FirstOrDefaultAsync();
+                return await db.Users.Where(u => u.Login == name).Select(u => u.Id).FirstOrDefaultAsync();
             }
         }
 

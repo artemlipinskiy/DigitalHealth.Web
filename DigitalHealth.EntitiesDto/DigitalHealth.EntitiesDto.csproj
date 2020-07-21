@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>2abfbc3a-ba48-41c5-bc52-b8893305fa63</ProjectGuid>
+    <ProjectGuid>{2ABFBC3A-BA48-41C5-BC52-B8893305FA63}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DigitalHealth.EntitiesDto</RootNamespace>
@@ -31,24 +31,41 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="Microsoft.CSharp"/>
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Net.Http"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="AccountLoginDto.cs" />
+    <Compile Include="AccountRegisterDto.cs" />
+    <Compile Include="DiagnosticRequestDto.cs" />
+    <Compile Include="DiagnosticResultDto.cs" />
+    <Compile Include="DiseaseCreateDto.cs" />
+    <Compile Include="DiseaseDto.cs" />
+    <Compile Include="DiseaseListDto.cs" />
+    <Compile Include="DiseaseUpdateDto.cs" />
+    <Compile Include="ICDDto.cs" />
+    <Compile Include="ICDListDto.cs" />
+    <Compile Include="MarkDto.cs" />
+    <Compile Include="MarkListDto.cs" />
+    <Compile Include="MethodOfTreatmentCreateDto.cs" />
+    <Compile Include="MethodOfTreatmentDto.cs" />
+    <Compile Include="MethodOfTreatmentListDto.cs" />
+    <Compile Include="MethodOfTreatmentUpdateDto.cs" />
+    <Compile Include="ProfileDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoleDto.cs" />
+    <Compile Include="SymptomCreateDto.cs" />
+    <Compile Include="SymptomDetailsDto.cs" />
+    <Compile Include="SymptomListDto.cs" />
+    <Compile Include="SymptomUpdateDto.cs" />
+    <Compile Include="UserDto.cs" />
+    <Compile Include="UserListDto.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
- </Project>
+</Project>

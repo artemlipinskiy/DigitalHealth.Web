@@ -159,69 +159,10 @@
     <Compile Include="Controllers\MethodOfTreatmentController.cs" />
     <Compile Include="Controllers\SymptomController.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="DHContext.cs" />
-    <Compile Include="EntitiesDto\AccountLoginDto.cs" />
-    <Compile Include="EntitiesDto\AccountRegisterDto.cs" />
-    <Compile Include="EntitiesDto\DiagnosticRequestDto.cs" />
-    <Compile Include="EntitiesDto\DiagnosticResultDto.cs" />
-    <Compile Include="EntitiesDto\DiseaseCreateDto.cs" />
-    <Compile Include="EntitiesDto\DiseaseDto.cs" />
-    <Compile Include="EntitiesDto\DiseaseListDto.cs" />
-    <Compile Include="EntitiesDto\DiseaseUpdateDto.cs" />
-    <Compile Include="EntitiesDto\ICDDto.cs" />
-    <Compile Include="EntitiesDto\ICDListDto.cs" />
-    <Compile Include="EntitiesDto\MarkDto.cs" />
-    <Compile Include="EntitiesDto\MarkListDto.cs" />
-    <Compile Include="EntitiesDto\MethodOfTreatmentCreateDto.cs" />
-    <Compile Include="EntitiesDto\MethodOfTreatmentDto.cs" />
-    <Compile Include="EntitiesDto\MethodOfTreatmentListDto.cs" />
-    <Compile Include="EntitiesDto\MethodOfTreatmentUpdateDto.cs" />
-    <Compile Include="EntitiesDto\ProfileDto.cs" />
-    <Compile Include="EntitiesDto\RoleDto.cs" />
-    <Compile Include="EntitiesDto\SymptomDetailsDto.cs" />
-    <Compile Include="EntitiesDto\SymptomCreateDto.cs" />
-    <Compile Include="EntitiesDto\SymptomListDto.cs" />
-    <Compile Include="EntitiesDto\SymptomUpdateDto.cs" />
-    <Compile Include="EntitiesDto\UserDto.cs" />
-    <Compile Include="EntitiesDto\UserListDto.cs" />
-    <Compile Include="Entities\Disease.cs" />
-    <Compile Include="Entities\ICD.cs" />
-    <Compile Include="Entities\Mark.cs" />
-    <Compile Include="Entities\MethodOfTreatment.cs" />
-    <Compile Include="Entities\Profile.cs" />
-    <Compile Include="Entities\Role.cs" />
-    <Compile Include="Entities\Symptom.cs" />
-    <Compile Include="Entities\User.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202003141203062_init.cs" />
-    <Compile Include="Migrations\202003141203062_init.designer.cs">
-      <DependentUpon>202003141203062_init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202003141523337_update.cs" />
-    <Compile Include="Migrations\202003141523337_update.designer.cs">
-      <DependentUpon>202003141523337_update.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202003141538029_update_2.cs" />
-    <Compile Include="Migrations\202003141538029_update_2.designer.cs">
-      <DependentUpon>202003141538029_update_2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202005020034179_updateprofile.cs" />
-    <Compile Include="Migrations\202005020034179_updateprofile.designer.cs">
-      <DependentUpon>202005020034179_updateprofile.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\AccountService.cs" />
-    <Compile Include="Services\DiagnosticService.cs" />
-    <Compile Include="Services\DiseaseCRUDService.cs" />
-    <Compile Include="Services\ICDCRUDService.cs" />
-    <Compile Include="Services\MarkCRUDService.cs" />
-    <Compile Include="Services\MethodOfTreatmentCRUDService.cs" />
-    <Compile Include="Services\RoleService.cs" />
-    <Compile Include="Services\SymptomCRUDService.cs" />
-    <Compile Include="Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -282,7 +223,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
@@ -299,18 +239,18 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202003141203062_init.resx">
-      <DependentUpon>202003141203062_init.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202003141523337_update.resx">
-      <DependentUpon>202003141523337_update.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202003141538029_update_2.resx">
-      <DependentUpon>202003141538029_update_2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202005020034179_updateprofile.resx">
-      <DependentUpon>202005020034179_updateprofile.cs</DependentUpon>
-    </EmbeddedResource>
+    <ProjectReference Include="..\DigitalHealth.EntitiesDto\DigitalHealth.EntitiesDto.csproj">
+      <Project>{2ABFBC3A-BA48-41C5-BC52-B8893305FA63}</Project>
+      <Name>DigitalHealth.EntitiesDto</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DigitalHealth.GlobalInterfaces\DigitalHealth.GlobalInterfaces.csproj">
+      <Project>{B8389CB7-20D8-4293-99F3-C5F983A1ED7C}</Project>
+      <Name>DigitalHealth.GlobalInterfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DigitalHealth.Services\DigitalHealth.Services.csproj">
+      <Project>{888793CA-42C9-4418-B01C-5A514BA17298}</Project>
+      <Name>DigitalHealth.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

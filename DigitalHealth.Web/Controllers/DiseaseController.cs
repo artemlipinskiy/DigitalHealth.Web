@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using DigitalHealth.GlobalInterfaces;
 using DigitalHealth.Web.EntitiesDto;
 using DigitalHealth.Web.Services;
 
@@ -13,7 +14,12 @@ namespace DigitalHealth.Web.Controllers
     [Authorize(Roles = "SysAdmin, Expert")]
     public class DiseaseController : Controller
     {
-        private readonly DiseaseCRUDService _diseaseCrudService = new DiseaseCRUDService();
+        private readonly IDiseaseCRUDService _diseaseCrudService;
+
+        public DiseaseController()
+        {
+            _diseaseCrudService = new DiseaseCRUDService();
+        }
         // GET: ICD
         public async Task<ActionResult> Index(int? page)
         {
