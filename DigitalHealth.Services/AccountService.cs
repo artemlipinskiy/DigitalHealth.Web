@@ -13,34 +13,79 @@ using System.Threading.Tasks;
 
 namespace DigitalHealth.Services
 {
-    public class AccountService : IAccountService 
+    public class AccountService : IAccountService
     {
+        private readonly ILogger _logger;
+
+        public AccountService(ILogger logger)
+        {
+            _logger = logger;
+        }
         public async Task<bool> Login(AccountLoginDto dto, IAuthenticationManager AuthenticationManager)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                User user = await db.Users.Include(r => r.Role).Where(u => u.Login == dto.Login).FirstOrDefaultAsync();
-                if (user == null)
+                using (DHContext db = new DHContext())
                 {
-                    return false;
-                }
-                else
-                {
-                    if (await VerifyHashedPassword(user.HashPassword, dto.Password))
+                    User user = await db.Users.Include(r => r.Role).Where(u => u.Login == dto.Login).FirstOrDefaultAsync();
+                    if (user == null)
                     {
-                        ClaimsIdentity claim = new ClaimsIdentity("ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-                        claim.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString(), ClaimValueTypes.String));
-                        claim.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login, ClaimValueTypes.String));
-                        claim.AddClaim(new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider",
-                            "OWIN Provider", ClaimValueTypes.String));
-                        if (user.Role != null)
-                            claim.AddClaim(new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name, ClaimValueTypes.String));
-
-                        AuthenticationManager.SignOut();
-                        AuthenticationManager.SignIn(new AuthenticationProperties
+                        return false;
+                    }
+                    else
+                    {
+                        if (await VerifyHashedPassword(user.HashPassword, dto.Password))
                         {
-                            IsPersistent = true
-                        }, claim);
+                            ClaimsIdentity claim = new ClaimsIdentity("ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+                            claim.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString(), ClaimValueTypes.String));
+                            claim.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login, ClaimValueTypes.String));
+                            claim.AddClaim(new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider",
+                                "OWIN Provider", ClaimValueTypes.String));
+                            if (user.Role != null)
+                                claim.AddClaim(new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name, ClaimValueTypes.String));
+
+                            AuthenticationManager.SignOut();
+                            AuthenticationManager.SignIn(new AuthenticationProperties
+                            {
+                                IsPersistent = true
+                            }, claim);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed Login for {dto.Login} : {exc}");
+                return false;
+            }
+            
+        }
+        public async Task Logout(IAuthenticationManager AuthenticationManager)
+        {
+            try
+            {
+                AuthenticationManager.SignOut();
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed logout {AuthenticationManager.User.Identity} : {exc}");
+                throw;
+            }
+        }
+        public async Task<bool> LoginExist(string Login)
+        {
+            try
+            {
+                using (DHContext db = new DHContext())
+                {
+                    var userdb = await db.Users.Where(user => user.Login == Login).FirstOrDefaultAsync();
+                    if (userdb != null)
+                    {
                         return true;
                     }
                     else
@@ -49,27 +94,12 @@ namespace DigitalHealth.Services
                     }
                 }
             }
-        }
-        public async Task Logout(IAuthenticationManager AuthenticationManager)
-        {
-            AuthenticationManager.SignOut();
-        }
-
-
-        public async Task<bool> LoginExist(string Login)
-        {
-            using (DHContext db = new DHContext())
+            catch (Exception exc)
             {
-                var userdb = await db.Users.Where(user => user.Login == Login).FirstOrDefaultAsync();
-                if (userdb != null)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                _logger.Error($"Failed check login exist {Login}: {exc}");
+                throw;
             }
+            
         }
         public async Task<bool> PasswordMatch(string password, string repeatpassword)
         {
@@ -84,81 +114,125 @@ namespace DigitalHealth.Services
         }
         public async Task<RoleDto> GetRole(string name)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.Roles.Where(r => r.Name == name).Select(r => new RoleDto
+                using (DHContext db = new DHContext())
                 {
-                    Description = r.Description,
-                    Id = r.Id,
-                    Name = r.Name
-                }).FirstOrDefaultAsync();
+                    return await db.Roles.Where(r => r.Name == name).Select(r => new RoleDto
+                    {
+                        Description = r.Description,
+                        Id = r.Id,
+                        Name = r.Name
+                    }).FirstOrDefaultAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed GetRole for {name}: {exc}");
+                throw;
+            }
+           
         }
         public async Task<bool> Register(AccountRegisterDto dto)
         {
-            Guid Userid = Guid.NewGuid();
-            Guid ProfileId = Guid.NewGuid();
-            RoleDto defaultRole = await GetRole("Default");
-            using (DHContext db = new DHContext())
+            try
             {
-                Profile profile = new Profile
+                Guid Userid = Guid.NewGuid();
+                Guid ProfileId = Guid.NewGuid();
+                RoleDto defaultRole = await GetRole("Default");
+                using (DHContext db = new DHContext())
                 {
-                    Id = ProfileId,
-                    FirstName = string.Empty,
-                    Gender = string.Empty,
-                    LastName = string.Empty,
-                    MiddleName = string.Empty,
-                    UserId = Userid
-                };
-                User user = new User
-                {
-                    Login = dto.Login,
-                    Id = Userid,
-                    RoleId = defaultRole.Id,
-                    HashPassword = HashPassword(dto.Password),
-                    ProfileId = ProfileId
-                };
-                db.Users.Add(user);
-                db.Profiles.Add(profile);
-                await db.SaveChangesAsync();
+                    Profile profile = new Profile
+                    {
+                        Id = ProfileId,
+                        FirstName = string.Empty,
+                        Gender = string.Empty,
+                        LastName = string.Empty,
+                        MiddleName = string.Empty,
+                        UserId = Userid
+                    };
+                    User user = new User
+                    {
+                        Login = dto.Login,
+                        Id = Userid,
+                        RoleId = defaultRole.Id,
+                        HashPassword = HashPassword(dto.Password),
+                        ProfileId = ProfileId
+                    };
+                    db.Users.Add(user);
+                    db.Profiles.Add(profile);
+                    await db.SaveChangesAsync();
+                }
+                return true;
             }
-            return true;
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed register new user {dto.Login} : {exc}");
+                return false;
+            }
+           
         }
-
         public async Task<ProfileDto> GetProfile(Guid userId)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.Profiles.Where(p => p.UserId == userId).Select(p => new ProfileDto
+                using (DHContext db = new DHContext())
                 {
-                    Id = p.Id,
-                    FirstName = p.FirstName,
-                    LastName = p.LastName,
-                    MiddleName = p.MiddleName,
-                    Gender = p.Gender
-                }).FirstOrDefaultAsync();
+                    return await db.Profiles.Where(p => p.UserId == userId).Select(p => new ProfileDto
+                    {
+                        Id = p.Id,
+                        FirstName = p.FirstName,
+                        LastName = p.LastName,
+                        MiddleName = p.MiddleName,
+                        Gender = p.Gender
+                    }).FirstOrDefaultAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed get profile for user {userId} : {exc}");
+                throw;
+            }
+           
         }
         public async Task<Guid> GetUserId(string name)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.Users.Where(u => u.Login == name).Select(u => u.Id).FirstOrDefaultAsync();
+                using (DHContext db = new DHContext())
+                {
+                    return await db.Users.Where(u => u.Login == name).Select(u => u.Id).FirstOrDefaultAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed get user id by name {name} : {exc}");
+                throw;
+            }
+            
         }
 
         public async Task UpdateProfile(ProfileDto dto)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                var entity = await db.Profiles.Where(p => p.Id == dto.Id).FirstOrDefaultAsync();
-                entity.FirstName = dto.FirstName;
-                entity.LastName = dto.LastName;
-                entity.MiddleName = dto.MiddleName;
-                entity.Gender = dto.Gender;
-                db.Entry(entity).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                using (DHContext db = new DHContext())
+                {
+                    var entity = await db.Profiles.Where(p => p.Id == dto.Id).FirstOrDefaultAsync();
+                    entity.FirstName = dto.FirstName;
+                    entity.LastName = dto.LastName;
+                    entity.MiddleName = dto.MiddleName;
+                    entity.Gender = dto.Gender;
+                    db.Entry(entity).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed update profile {dto.Id} : {exc}");
+                throw;
+            }
+            
         }
         #region Password
         private static string HashPassword(string password)
@@ -181,29 +255,38 @@ namespace DigitalHealth.Services
         }
         public async Task<bool> VerifyHashedPassword(string hashedPassword, string password)
         {
-            byte[] buffer4;
-            if (hashedPassword == null)
+            try
             {
+                byte[] buffer4;
+                if (hashedPassword == null)
+                {
+                    return false;
+                }
+                if (password == null)
+                {
+                    throw new ArgumentNullException("password");
+                }
+                byte[] src = Convert.FromBase64String(hashedPassword);
+                if ((src.Length != 0x31) || (src[0] != 0))
+                {
+                    return false;
+                }
+                byte[] dst = new byte[0x10];
+                Buffer.BlockCopy(src, 1, dst, 0, 0x10);
+                byte[] buffer3 = new byte[0x20];
+                Buffer.BlockCopy(src, 0x11, buffer3, 0, 0x20);
+                using (Rfc2898DeriveBytes bytes = new Rfc2898DeriveBytes(password, dst, 0x3e8))
+                {
+                    buffer4 = bytes.GetBytes(0x20);
+                }
+                return ByteArraysEqual(buffer3, buffer4);
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed verify hashed password : {exc}");
                 return false;
             }
-            if (password == null)
-            {
-                throw new ArgumentNullException("password");
-            }
-            byte[] src = Convert.FromBase64String(hashedPassword);
-            if ((src.Length != 0x31) || (src[0] != 0))
-            {
-                return false;
-            }
-            byte[] dst = new byte[0x10];
-            Buffer.BlockCopy(src, 1, dst, 0, 0x10);
-            byte[] buffer3 = new byte[0x20];
-            Buffer.BlockCopy(src, 0x11, buffer3, 0, 0x20);
-            using (Rfc2898DeriveBytes bytes = new Rfc2898DeriveBytes(password, dst, 0x3e8))
-            {
-                buffer4 = bytes.GetBytes(0x20);
-            }
-            return ByteArraysEqual(buffer3, buffer4);
+           
         }
         private static bool ByteArraysEqual(byte[] b1, byte[] b2)
         {
