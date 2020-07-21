@@ -15,71 +15,119 @@ namespace DigitalHealth.Web.Services
 
     public class MethodOfTreatmentCRUDService : IMethodOfTreatmentCRUDService
     {
+        private readonly ILogger _logger;
+        public MethodOfTreatmentCRUDService(ILogger logger)
+        {
+            _logger = logger;
+        }
         private async Task<MethodOfTreatment> GetEntity(Guid Id)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.MethodOfTreatments.SingleOrDefaultAsync(method => method.Id == Id);
+                using (DHContext db = new DHContext())
+                {
+                    return await db.MethodOfTreatments.SingleOrDefaultAsync(method => method.Id == Id);
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed GetEntity MethodOfTreatment {Id}: {exc}");
+                throw;
+            }
+           
         }
 
         public async Task Delete(Guid Id)
         {
-            var entity = await GetEntity(Id);
-            using (DHContext db = new DHContext())
+            try
             {
-                db.Entry(entity).State = EntityState.Deleted;
-                db.MethodOfTreatments.Remove(entity);
-                await db.SaveChangesAsync();
+                var entity = await GetEntity(Id);
+                using (DHContext db = new DHContext())
+                {
+                    db.Entry(entity).State = EntityState.Deleted;
+                    db.MethodOfTreatments.Remove(entity);
+                    await db.SaveChangesAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed delete MethodOfTreatment {Id} : {exc}");
+            }
+          
         }
 
         public async Task Create(MethodOfTreatmentCreateDto dto)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                MethodOfTreatment entity = new MethodOfTreatment
+                using (DHContext db = new DHContext())
                 {
-                    Id = Guid.NewGuid(),
-                    Title = dto.Title,
-                    Description = dto.Description,
-                    DiseaseId = dto.DiseaseId,
-                    Source = dto.Source
-                };
-                db.MethodOfTreatments.Add(entity);
-                await db.SaveChangesAsync();
+                    MethodOfTreatment entity = new MethodOfTreatment
+                    {
+                        Id = Guid.NewGuid(),
+                        Title = dto.Title,
+                        Description = dto.Description,
+                        DiseaseId = dto.DiseaseId,
+                        Source = dto.Source
+                    };
+                    db.MethodOfTreatments.Add(entity);
+                    await db.SaveChangesAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed create MethodOfTreatment : {exc}");
+                throw;  
+            }
+            
         }
 
         public async Task Update(MethodOfTreatmentUpdateDto dto)
         {
-            var entity = await GetEntity(dto.Id);
-            using (DHContext db = new DHContext())
+            try
             {
+                var entity = await GetEntity(dto.Id);
+                using (DHContext db = new DHContext())
+                {
 
-                entity.Title = dto.Title;
-                entity.Description = dto.Description;
-                entity.DiseaseId = dto.DiseaseId;
-                entity.Source = dto.Source;
-                db.Entry(entity).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                    entity.Title = dto.Title;
+                    entity.Description = dto.Description;
+                    entity.DiseaseId = dto.DiseaseId;
+                    entity.Source = dto.Source;
+                    db.Entry(entity).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed Update MethodOfTreatment {dto.Id} : {exc}");
+                throw;
+            }
+          
         }
 
         public async Task<MethodOfTreatmentDto> Get(Guid Id)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.MethodOfTreatments.Include(m=>m.Disease).Select(method => new MethodOfTreatmentDto
+                using (DHContext db = new DHContext())
                 {
-                    Id = method.Id,
-                    Description = method.Description,
-                    DiseaseId = method.DiseaseId,
-                    Source = method.Source,
-                    DiseaseName = method.Disease.Name,
-                    Title = method.Title
+                    return await db.MethodOfTreatments.Include(m=>m.Disease).Select(method => new MethodOfTreatmentDto
+                    {
+                        Id = method.Id,
+                        Description = method.Description,
+                        DiseaseId = method.DiseaseId,
+                        Source = method.Source,
+                        DiseaseName = method.Disease.Name,
+                        Title = method.Title
                     
-                }).SingleOrDefaultAsync(method => method.Id == Id);
+                    }).SingleOrDefaultAsync(method => method.Id == Id);
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed Get MethodOfTreatmentDto {Id} : {exc}");
+                throw;
             }
         }
 
@@ -120,10 +168,10 @@ namespace DigitalHealth.Web.Services
             }
             catch (Exception exc)
             {
-                //Console.WriteLine(exc);
+                _logger.Error($"Failed get list MethodOfTreatments : {exc}");
+                throw;
 
             }
-            return null;
         }
         public async Task<List<MethodOfTreatmentDto>> GetAll()
         {
@@ -144,10 +192,10 @@ namespace DigitalHealth.Web.Services
             }
             catch (Exception exc)
             {
-                //Console.WriteLine(exc);
+                _logger.Error($"Failed get all MethodOfTreatments : {exc}");
+                throw;
 
             }
-            return null;
         }
 
     }
