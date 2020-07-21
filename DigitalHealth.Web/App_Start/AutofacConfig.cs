@@ -31,6 +31,7 @@ namespace DigitalHealth.Web.App_Start
             builder.RegisterType<RoleService>().As<IRoleService>();
             builder.RegisterType<SymptomCRUDService>().As<ISymptomCRUDService>();
             builder.RegisterType<UserService>().As<IUserService>();
+            builder.RegisterType<Logger>().As<ILogger>();
 
             // создаем новый контейнер с теми зависимостями, которые определены выше
             var container = builder.Build();

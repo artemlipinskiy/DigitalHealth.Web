@@ -51,6 +51,7 @@
     <Compile Include="IDiagnosticService.cs" />
     <Compile Include="IDiseaseCRUDService.cs" />
     <Compile Include="IICDCRUDService.cs" />
+    <Compile Include="ILogger.cs" />
     <Compile Include="IMarkCRUDService.cs" />
     <Compile Include="IMethodOfTreatmentCRUDService.cs" />
     <Compile Include="IRoleService.cs" />
