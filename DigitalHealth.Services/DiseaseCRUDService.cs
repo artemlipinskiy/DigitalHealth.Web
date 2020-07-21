@@ -14,44 +14,73 @@ namespace DigitalHealth.Web.Services
  
     public class DiseaseCRUDService : IDiseaseCRUDService
     {
+        private readonly ILogger _logger;
+        public DiseaseCRUDService(ILogger logger)
+        {
+            _logger = logger;
+        }
         private async Task<Disease> GetEntity(Guid Id)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.Diseases.SingleOrDefaultAsync(Disease => Disease.Id == Id);
+                using (DHContext db = new DHContext())
+                {
+                    return await db.Diseases.SingleOrDefaultAsync(Disease => Disease.Id == Id);
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed GetEntity Disease {Id} : {exc}");
+                throw;
+            }
+            
         }
-
         public async Task Delete(Guid Id)
         {
-            var entity = await GetEntity(Id);
-            using (DHContext db = new DHContext())
+            try
             {
-                db.Entry(entity).State = EntityState.Deleted;
-                db.Diseases.Remove(entity);
-                await db.SaveChangesAsync();
+                var entity = await GetEntity(Id);
+                using (DHContext db = new DHContext())
+                {
+                    db.Entry(entity).State = EntityState.Deleted;
+                    db.Diseases.Remove(entity);
+                    await db.SaveChangesAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed delete disease {Id} : {exc}");
+            }
+           
         }
 
         public async Task Create(DiseaseCreateDto dto)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                Disease entity = new Disease
+                using (DHContext db = new DHContext())
                 {
-                    Id = Guid.NewGuid(),
-                    Description = dto.Description,
-                    Name = dto.Name,
-                    ICDID = dto.ICDID
-                };
-                if (dto.SymptomIds != null)
-                    foreach (var item in dto.SymptomIds)
+                    Disease entity = new Disease
                     {
-                        entity.Symptoms.Add(await db.Symptoms.FirstOrDefaultAsync(s => s.Id == item));
-                    }
-                db.Diseases.Add(entity);
-                await db.SaveChangesAsync();
+                        Id = Guid.NewGuid(),
+                        Description = dto.Description,
+                        Name = dto.Name,
+                        ICDID = dto.ICDID
+                    };
+                    if (dto.SymptomIds != null)
+                        foreach (var item in dto.SymptomIds)
+                        {
+                            entity.Symptoms.Add(await db.Symptoms.FirstOrDefaultAsync(s => s.Id == item));
+                        }
+                    db.Diseases.Add(entity);
+                    await db.SaveChangesAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed create disease : {exc}");
+            }
+           
         }
 
         public async Task Update(DiseaseUpdateDto dto)
@@ -77,10 +106,9 @@ namespace DigitalHealth.Web.Services
                     await db.SaveChangesAsync();
                 }
             }
-            catch (Exception e)
+            catch (Exception exc)
             {
-                Console.WriteLine(e);
-                throw;
+                _logger.Error($"Failed update Disease {dto.Id} : {exc}");
             }
           
         }
@@ -102,10 +130,10 @@ namespace DigitalHealth.Web.Services
                     }).SingleOrDefaultAsync(Disease => Disease.Id == Id);
                 }
             }
-            catch (Exception e)
+            catch (Exception exc)
             {
-                Console.WriteLine(e);
-                return null;
+               _logger.Error($"Failed Get DiseaseDto {Id} : {exc}");
+                throw;
             }
            
         }
@@ -148,32 +176,42 @@ namespace DigitalHealth.Web.Services
             }
             catch (Exception exc)
             {
-                //Console.WriteLine(exc);
-
+                _logger.Error($"Failed get List Disease : {exc}");
+                throw;
             }
-            return null;
+
+            
         }
 
         public async Task<List<DiseaseDto>> GetAll()
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                var dbItems = await db.Diseases.Include(d => d.ICD).Include(d => d.Symptoms).ToListAsync();
-                return dbItems.Select(disease => new DiseaseDto
+                using (DHContext db = new DHContext())
                 {
-                    Id = disease.Id,
-                    Description = disease.Description,
-                    ICDID = disease.ICDID,
-                    ICDName = disease.ICDID != null ? disease.ICD.Code : string.Empty,
-                    Name = disease.Name,
-                    SymptomIds = disease.Symptoms != null
-                        ? disease.Symptoms.Select(s => s.Id).ToList()
-                        : new List<Guid>(),
-                    SymptomNames = disease.Symptoms != null
-                        ? disease.Symptoms.Select(s => s.Name).ToList()
-                        : new List<string>()
-                }).ToList();
+                    var dbItems = await db.Diseases.Include(d => d.ICD).Include(d => d.Symptoms).ToListAsync();
+                    return dbItems.Select(disease => new DiseaseDto
+                    {
+                        Id = disease.Id,
+                        Description = disease.Description,
+                        ICDID = disease.ICDID,
+                        ICDName = disease.ICDID != null ? disease.ICD.Code : string.Empty,
+                        Name = disease.Name,
+                        SymptomIds = disease.Symptoms != null
+                            ? disease.Symptoms.Select(s => s.Id).ToList()
+                            : new List<Guid>(),
+                        SymptomNames = disease.Symptoms != null
+                            ? disease.Symptoms.Select(s => s.Name).ToList()
+                            : new List<string>()
+                    }).ToList();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed get all diseases : {exc}");
+                throw;
+            }
+            
         }
     }
 }
