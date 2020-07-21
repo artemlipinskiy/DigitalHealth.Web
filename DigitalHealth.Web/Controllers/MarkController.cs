@@ -14,9 +14,9 @@ namespace DigitalHealth.Web.Controllers
     {
         private IMarkCRUDService _markCrudService;
         // GET: Mark
-        public MarkController()
+        public MarkController(IMarkCRUDService markCrudService)
         {
-            _markCrudService = new MarkCRUDService();
+            _markCrudService = markCrudService;
         }
         public async Task<ActionResult> Index(int? page)
         {

@@ -15,9 +15,9 @@ namespace DigitalHealth.Web.Controllers
     {
         private readonly IMethodOfTreatmentCRUDService _methodOfTreatmentCrudService;
 
-        public MethodOfTreatmentController()
+        public MethodOfTreatmentController(IMethodOfTreatmentCRUDService methodOfTreatmentCrudService)
         {
-            _methodOfTreatmentCrudService = new MethodOfTreatmentCRUDService();
+            _methodOfTreatmentCrudService = methodOfTreatmentCrudService;
         }
         // GET: MethodOfTreatment
         public async Task<ActionResult> Index(int? page)

@@ -15,9 +15,9 @@ namespace DigitalHealth.Web.Controllers
     {
         private readonly ISymptomCRUDService _symptomCrudService;
 
-        public SymptomController()
+        public SymptomController(ISymptomCRUDService symptomCrudService)
         {
-            _symptomCrudService = new SymptomCRUDService();
+            _symptomCrudService = symptomCrudService;
         }
         // GET: ICD
         public async Task<ActionResult> Index(int? page)

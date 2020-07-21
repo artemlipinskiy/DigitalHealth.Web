@@ -16,9 +16,9 @@ namespace DigitalHealth.Web.Controllers
     {
         private readonly IDiseaseCRUDService _diseaseCrudService;
 
-        public DiseaseController()
+        public DiseaseController(IDiseaseCRUDService diseaseCrudService)
         {
-            _diseaseCrudService = new DiseaseCRUDService();
+            _diseaseCrudService = diseaseCrudService;
         }
         // GET: ICD
         public async Task<ActionResult> Index(int? page)

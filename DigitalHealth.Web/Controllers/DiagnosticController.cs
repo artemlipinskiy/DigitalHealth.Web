@@ -20,12 +20,15 @@ namespace DigitalHealth.Web.Controllers
         private readonly IMarkCRUDService _markCrudService;
         private readonly  IAccountService _accountService;
 
-       public DiagnosticController()
+       public DiagnosticController(IDiagnosticService diagnosticService,
+           ISymptomCRUDService symptomCrudService,
+           IMarkCRUDService markCrudService,
+           IAccountService accountService)
        {
-           _diagnosticService = new DiagnosticService();
-           _symptomCrudService = new SymptomCRUDService();
-           _markCrudService = new MarkCRUDService();
-           _accountService = new AccountService();
+           _diagnosticService = diagnosticService;
+           _symptomCrudService = symptomCrudService;
+           _markCrudService = markCrudService;
+           _accountService = accountService;
        }
         // GET: Diagnostic
         public ActionResult Index()

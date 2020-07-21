@@ -11,7 +11,11 @@ namespace DigitalHealth.Web.Controllers
     public class ICDController : Controller
     {
         private readonly IICDCRUDService _icdcrudService;
-        public ICDController() { _icdcrudService = new ICDCRUDService(); }
+
+        public ICDController(IICDCRUDService icdcrudService)
+        {
+            _icdcrudService = icdcrudService;
+        }
         // GET: ICD
         public async Task<ActionResult> Index(int? page)
         {

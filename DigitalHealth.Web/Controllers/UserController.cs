@@ -16,10 +16,11 @@ namespace DigitalHealth.Web.Controllers
         private readonly IUserService _userService;
         private readonly IRoleService _roleService;
 
-        public UserController()
+        public UserController(IUserService userService,
+            IRoleService roleService)
         {
-            _roleService = new RoleService();
-            _userService = new UserService();
+            _roleService = roleService;
+            _userService = userService;
         }
         // GET: User
         public async Task<ActionResult> Index(int? page)
