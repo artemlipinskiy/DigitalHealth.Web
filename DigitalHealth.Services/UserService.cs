@@ -15,12 +15,26 @@ namespace DigitalHealth.Web.Services
 
     public class UserService : IUserService
     {
+        private readonly ILogger _logger;
+
+        public UserService(ILogger logger)
+        {
+            _logger = logger;
+        }
         private async Task<User> GetEntity(Guid id)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.Users.Where(u => u.Id == id).Include(u => u.Profile).Include(u => u.Role)
-                    .SingleOrDefaultAsync();
+                using (DHContext db = new DHContext())
+                {
+                    return await db.Users.Where(u => u.Id == id).Include(u => u.Profile).Include(u => u.Role)
+                        .SingleOrDefaultAsync();
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed GetEntity user {id} : {exc}");
+                throw;
             }
         }
 
@@ -61,10 +75,10 @@ namespace DigitalHealth.Web.Services
             }
             catch (Exception exc)
             {
-                //Console.WriteLine(exc);
+                _logger.Error($"Failed get list users : {exc}");
+                throw;
 
             }
-            return null;
         }
 
         public async Task SetUserRole(UserDto dto, Guid RoleId)
@@ -82,7 +96,7 @@ namespace DigitalHealth.Web.Services
             }
             catch (Exception exc)
             {
-                Console.WriteLine(exc);
+                _logger.Error($"Failed set user ({dto.UserId}) role ({RoleId}) : {exc}");
                 throw;
             }
            

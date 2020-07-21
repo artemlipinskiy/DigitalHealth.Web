@@ -13,16 +13,31 @@ namespace DigitalHealth.Web.Services
 
     public class RoleService : IRoleService
     {
+        private readonly ILogger _logger;
+
+        public RoleService(ILogger logger)
+        {
+            _logger = logger;
+        }
         public async Task<List<RoleDto>> GetAll()
         {
-            using (DHContext db = new DHContext())
+
+            try
             {
-                return await db.Roles.Select(r => new RoleDto
+                using (DHContext db = new DHContext())
                 {
-                    Id = r.Id,
-                    Description = r.Description,
-                    Name = r.Name
-                }).ToListAsync();
+                    return await db.Roles.Select(r => new RoleDto
+                    {
+                        Id = r.Id,
+                        Description = r.Description,
+                        Name = r.Name
+                    }).ToListAsync();
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed GetAll Roles : {exc}");
+                throw;
             }
         }
     }

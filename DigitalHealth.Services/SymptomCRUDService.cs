@@ -14,76 +14,131 @@ namespace DigitalHealth.Web.Services
    
     public class SymptomCRUDService : ISymptomCRUDService
     {
+        private readonly ILogger _logger;
+
+        public SymptomCRUDService(ILogger logger)
+        {
+            _logger = logger;
+        }
         private async Task<Symptom> GetEntity(Guid Id)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.Symptoms.SingleOrDefaultAsync(icd => icd.Id == Id);
+                using (DHContext db = new DHContext())
+                {
+                    return await db.Symptoms.SingleOrDefaultAsync(icd => icd.Id == Id);
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed GetEntity Symptom {Id} : {exc}");
+                throw;
             }
         }
 
         public async Task Delete(Guid Id)
         {
-            var entity = await GetEntity(Id);
-            using (DHContext db = new DHContext())
+            try
             {
-                db.Entry(entity).State = EntityState.Deleted;
-                db.Symptoms.Remove(entity);
-                await db.SaveChangesAsync();
+                var entity = await GetEntity(Id);
+                using (DHContext db = new DHContext())
+                {
+                    db.Entry(entity).State = EntityState.Deleted;
+                    db.Symptoms.Remove(entity);
+                    await db.SaveChangesAsync();
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed delete symptom {Id} : {exc}");
+                throw;
             }
         }
 
         public async Task Create(SymptomCreateDto dto)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                Symptom entity = new Symptom
+                using (DHContext db = new DHContext())
                 {
-                    Id = Guid.NewGuid(),
-                    Description = dto.Description,
-                    Name = dto.Name
-                };
-                db.Symptoms.Add(entity);
-                await db.SaveChangesAsync();
+                    Symptom entity = new Symptom
+                    {
+                        Id = Guid.NewGuid(),
+                        Description = dto.Description,
+                        Name = dto.Name
+                    };
+                    db.Symptoms.Add(entity);
+                    await db.SaveChangesAsync();
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed create symptom : {exc}");
+                throw;
             }
         }
 
         public async Task Update(SymptomUpdateDto dto)
         {
-            var entity = await GetEntity(dto.Id);
-            using (DHContext db = new DHContext())
+
+            try
             {
-                entity.Description = dto.Description;
-                entity.Name = dto.Name;
-                db.Entry(entity).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                var entity = await GetEntity(dto.Id);
+                using (DHContext db = new DHContext())
+                {
+                    entity.Description = dto.Description;
+                    entity.Name = dto.Name;
+                    db.Entry(entity).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed update symptom {dto.Id} : {exc}");
+                throw;
             }
         }
 
         public async Task<SymptomUpdateDto> Get(Guid Id)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.Symptoms.Select(Symptom => new SymptomUpdateDto
+                using (DHContext db = new DHContext())
                 {
-                    Id = Symptom.Id,
-                    Description = Symptom.Description,
-                    Name = Symptom.Name
-                }).SingleOrDefaultAsync(Symptom => Symptom.Id == Id);
+                    return await db.Symptoms.Select(Symptom => new SymptomUpdateDto
+                    {
+                        Id = Symptom.Id,
+                        Description = Symptom.Description,
+                        Name = Symptom.Name
+                    }).SingleOrDefaultAsync(Symptom => Symptom.Id == Id);
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed Get SymptomDto {Id} : {exc}");
+                throw;
             }
         }
 
         public async Task<SymptomDetailsDto> GetWithDiseases(Guid Id)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.Symptoms.Include(s =>s.Diseases).Select(Symptom => new SymptomDetailsDto
+                using (DHContext db = new DHContext())
                 {
-                    Id = Symptom.Id,
-                    Description = Symptom.Description,
-                    Name = Symptom.Name,
-                    Diseases = Symptom.Diseases.Select(d =>d.Name).ToList(),
-                }).SingleOrDefaultAsync(Symptom => Symptom.Id == Id);
+                    return await db.Symptoms.Include(s =>s.Diseases).Select(Symptom => new SymptomDetailsDto
+                    {
+                        Id = Symptom.Id,
+                        Description = Symptom.Description,
+                        Name = Symptom.Name,
+                        Diseases = Symptom.Diseases.Select(d =>d.Name).ToList(),
+                    }).SingleOrDefaultAsync(Symptom => Symptom.Id == Id);
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed Get details Symptom {Id} : {exc}");
+                throw;
             }
         }
 
@@ -121,10 +176,10 @@ namespace DigitalHealth.Web.Services
             }
             catch (Exception exc)
             {
-                //Console.WriteLine(exc);
+               _logger.Error($"Failed get list symptom : {exc}");
+               throw;
 
             }
-            return null;
         }
 
         public async Task<List<SymptomUpdateDto>> GetAll()
@@ -144,10 +199,9 @@ namespace DigitalHealth.Web.Services
             }
             catch (Exception exc)
             {
-                //Console.WriteLine(exc);
-
+                _logger.Error($"Failed get all symptoms : {exc}");
+                throw;
             }
-            return null;
         }
     }
 }
