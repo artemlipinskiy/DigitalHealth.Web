@@ -5,6 +5,14 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalHealth.Web", "DigitalHealth.Web\DigitalHealth.Web.csproj", "{68664AC4-823B-4832-9A32-036E73D206E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalHealth.EntitiesDto", "DigitalHealth.EntitiesDto\DigitalHealth.EntitiesDto.csproj", "{2ABFBC3A-BA48-41C5-BC52-B8893305FA63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalHealth.Entities", "DigitalHealth.Entities\DigitalHealth.Entities.csproj", "{1E11A973-B81F-45A2-ADF9-0AC2F22364E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalHealth.GlobalInterfaces", "DigitalHealth.GlobalInterfaces\DigitalHealth.GlobalInterfaces.csproj", "{B8389CB7-20D8-4293-99F3-C5F983A1ED7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalHealth.Services", "DigitalHealth.Services\DigitalHealth.Services.csproj", "{888793CA-42C9-4418-B01C-5A514BA17298}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +23,22 @@ Global
 		{68664AC4-823B-4832-9A32-036E73D206E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68664AC4-823B-4832-9A32-036E73D206E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68664AC4-823B-4832-9A32-036E73D206E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ABFBC3A-BA48-41C5-BC52-B8893305FA63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ABFBC3A-BA48-41C5-BC52-B8893305FA63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ABFBC3A-BA48-41C5-BC52-B8893305FA63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ABFBC3A-BA48-41C5-BC52-B8893305FA63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E11A973-B81F-45A2-ADF9-0AC2F22364E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E11A973-B81F-45A2-ADF9-0AC2F22364E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E11A973-B81F-45A2-ADF9-0AC2F22364E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E11A973-B81F-45A2-ADF9-0AC2F22364E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8389CB7-20D8-4293-99F3-C5F983A1ED7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8389CB7-20D8-4293-99F3-C5F983A1ED7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8389CB7-20D8-4293-99F3-C5F983A1ED7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8389CB7-20D8-4293-99F3-C5F983A1ED7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{888793CA-42C9-4418-B01C-5A514BA17298}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{888793CA-42C9-4418-B01C-5A514BA17298}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{888793CA-42C9-4418-B01C-5A514BA17298}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{888793CA-42C9-4418-B01C-5A514BA17298}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
