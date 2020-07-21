@@ -14,67 +14,115 @@ namespace DigitalHealth.Web.Services
 
     public class ICDCRUDService : IICDCRUDService
     {
+        private readonly ILogger _logger;
+
+        public ICDCRUDService(ILogger logger)
+        {
+            _logger = logger;
+        }
         private async Task<ICD> GetEntity(Guid Id)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.ICDs.SingleOrDefaultAsync(icd => icd.Id == Id);
+                using (DHContext db = new DHContext())
+                {
+                    return await db.ICDs.SingleOrDefaultAsync(icd => icd.Id == Id);
+                }
             }
+            catch (Exception exc)
+            {
+               _logger.Error($"Failed GetEntity ICD {Id} : {exc}");
+               throw;
+            }
+            
         }
 
         public async Task Delete(Guid Id)
         {
-            var entity = await GetEntity(Id);
-            using (DHContext db = new DHContext())
+            try
             {
-                db.Entry(entity).State = EntityState.Deleted;
-                db.ICDs.Remove(entity);
-                await db.SaveChangesAsync();
+                var entity = await GetEntity(Id);
+                using (DHContext db = new DHContext())
+                {
+                    db.Entry(entity).State = EntityState.Deleted;
+                    db.ICDs.Remove(entity);
+                    await db.SaveChangesAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed delete ICD {Id} : {exc}");
+            }
+            
         }
 
         public async Task Create(ICDDto dto)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                ICD entity = new ICD
+                using (DHContext db = new DHContext())
                 {
-                    Id = Guid.NewGuid(),
-                    Code = dto.Code,
-                    Description = dto.Description,
-                    Name = dto.Name
-                };
-                db.ICDs.Add(entity);
-                await db.SaveChangesAsync();
+                    ICD entity = new ICD
+                    {
+                        Id = Guid.NewGuid(),
+                        Code = dto.Code,
+                        Description = dto.Description,
+                        Name = dto.Name
+                    };
+                    db.ICDs.Add(entity);
+                    await db.SaveChangesAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed create ICD : {exc}");
+            }
+          
         }
 
         public async Task Update(ICDDto dto)
         {
-            var entity = await GetEntity(dto.Id);
-            using (DHContext db = new DHContext())
+            try
             {
+                var entity = await GetEntity(dto.Id);
+                using (DHContext db = new DHContext())
+                {
 
-                entity.Code = dto.Code;
-                entity.Description = dto.Description;
-                entity.Name = dto.Name;
-                db.Entry(entity).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                    entity.Code = dto.Code;
+                    entity.Description = dto.Description;
+                    entity.Name = dto.Name;
+                    db.Entry(entity).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed update ICD {dto.Id} : {exc}");
+            }
+            
         }
 
         public async Task<ICDDto> Get(Guid Id)
         {
-            using (DHContext db = new DHContext())
+            try
             {
-                return await db.ICDs.Select(icd =>new ICDDto
+                using (DHContext db = new DHContext())
                 {
-                    Id = icd.Id,
-                    Code = icd.Code,
-                    Description = icd.Description,
-                    Name = icd.Name
-                }).SingleOrDefaultAsync(icd => icd.Id == Id);
+                    return await db.ICDs.Select(icd => new ICDDto
+                    {
+                        Id = icd.Id,
+                        Code = icd.Code,
+                        Description = icd.Description,
+                        Name = icd.Name
+                    }).SingleOrDefaultAsync(icd => icd.Id == Id);
+                }
             }
+            catch (Exception exc)
+            {
+                _logger.Error($"Failed get ICDDto {Id} : {exc}");
+                throw;
+            }
+           
         }
 
         public async Task<ICDListDto> List(int page = 0, int size = 5, string search = null)
@@ -111,10 +159,9 @@ namespace DigitalHealth.Web.Services
             }
             catch (Exception exc)
             {
-                //Console.WriteLine(exc);
-                
+                _logger.Error($"Failed get List ICD : {exc}");
+                throw;
             }
-            return null;
         }
         public async Task<List<ICDDto>> GetAll()
         {
@@ -133,10 +180,10 @@ namespace DigitalHealth.Web.Services
             }
             catch (Exception exc)
             {
-                //Console.WriteLine(exc);
-
+              _logger.Error($"Failed get all ICD : {exc}");
+              throw;
             }
-            return null;
+          
         }
 
         public async Task<int> GetTotalCount()
@@ -148,10 +195,10 @@ namespace DigitalHealth.Web.Services
                     return await db.ICDs.CountAsync();
                 }
             }
-            catch (Exception e)
+            catch (Exception exc)
             {
-                Console.WriteLine(e);
-                return 0;
+               _logger.Error($"Failed GetTotalCount ICD : {exc}");
+               throw;
             }
            
         }
