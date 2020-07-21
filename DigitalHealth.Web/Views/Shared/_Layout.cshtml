@@ -1,0 +1,110 @@
+﻿@using Microsoft.Ajax.Utilities
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand и toggle сгруппированы для лучшего отображения на мобильных дисплеях -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/Home/Index">Цифровое здравоохранение</a>
+            </div>
+
+            <!-- Соберите навигационные ссылки, формы, и другой контент для переключения -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    @if(User.IsInRole("Default")|| User.IsInRole("Expert") || User.IsInRole("SysAdmin"))
+                    { 
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            Функции<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/diagnostic/index">Диагностика</a></li>
+                        </ul>
+                    </li>}
+                    @if (User.IsInRole("SysAdmin"))
+                    {
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                Администратор<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                              
+                                <li><a href="/Mark/Index">Оценки</a></li>
+                                
+                                <li><a href="/User/Index">Пользователи</a></li>
+
+                            </ul>
+                        </li>
+
+                    }
+                    @if (User.IsInRole("Expert") || User.IsInRole("SysAdmin"))
+                    {
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                Эксперт<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/ICD/Index">Коды заболеваний</a></li>
+                                <li><a href="/Disease/Index">Заболевания</a></li>
+                                <li><a href="/Symptom/Index">Симптомы</a></li>
+                                <li><a href="/MethodOfTreatment/Index">Методы лечения</a></li>
+
+                            </ul>
+                        </li>
+
+                    }
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Профиль<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li><a href="/Account/MyProfile">Мой профиль</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="/Account/Logout">Выход</a></li>
+                            }
+                            else
+                            {
+                                <li><a href="/Account/Register">Регистрация</a></li>
+                                <li><a href="/Account/Login">Вход</a></li>
+                            }
+                        </ul>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>
+               
+                Author: Lipinskiy Artem
+            </p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

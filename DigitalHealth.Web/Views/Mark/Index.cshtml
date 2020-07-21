@@ -1,0 +1,110 @@
+﻿@model DigitalHealth.Web.EntitiesDto.MarkListDto
+
+@{
+    ViewBag.Title = "Index";
+}
+<div id="loading">
+    <h3 style="color:white">Loading. Please wait...</h3>
+</div>
+<div id="DeleteDialog" class="modal fade" role="dialog">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div id="dialogContent" class="modal-dialog" role="document">
+
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel"><b>Confirm delete</b></h3>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete the item?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="Cancel" onclick="Cancel()">Close</button>
+                    <button type="button" class="btn btn-primary" id="DeleteConfirm" itemid="" onclick="DeleteConfirm(itemid)">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<h2>Список оценок</h2>
+
+<br />
+<br />
+<br />
+<table class="table table-hover table-bordered">
+    <tr>
+        <th>
+            Логин
+        </th>
+        <th>
+            Метод лечения
+        </th>
+        <th>
+            Оценка
+        </th>
+        <th>
+            Комментарий
+        </th>
+        <th>
+            Дата создания
+        </th>
+        <th width="90px"> </th>
+    </tr>
+
+    @foreach (var item in Model.MarkDtos)
+    {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.Login)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.MethodName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Value)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Comment)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.CreateDate)
+    </td>
+    <td>
+        <button type="button" class="btn btn-default btn-sm item" id="@item.Id" onclick="Delete(id)">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Удалить
+        </button>
+    </td>
+</tr>
+    }
+
+</table>
+<br />
+<hr />
+@if (Model.Page > 1)
+{
+    <button type="button" class="btn btn-success" onclick="PreviousPage(@Model.Page)" id="PreviousPage">Предыдущая страница</button>
+}
+Страница: @Model.Page из @Model.PageCount
+@if (Model.PageCount > Model.Page)
+{
+    <button type="button" class="btn btn-success" onclick="NextPage(@Model.Page)">Следующая страница</button>
+}
+<style>
+    #loading {
+        background: no-repeat center center rgba(0,0,0,0.7);
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 9999999;
+    }
+
+    .hide {
+        display: none;
+    }
+</style>
+@section scripts
+{
+    <script src="~/Scripts/View/Mark.js"></script>
+}
